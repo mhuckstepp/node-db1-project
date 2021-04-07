@@ -1,5 +1,10 @@
 const router = require("express").Router();
 const Accounts = require("./accounts-model");
+const {
+  checkAccountId,
+  checkAccountNameUnique,
+  checkAccountPayload,
+} = require("./accounts-middleware");
 
 router.get("/", async (req, res, next) => {
   Accounts.getAll()
@@ -11,27 +16,27 @@ router.get("/", async (req, res, next) => {
     });
 });
 
-router.get("/:id", (req, res, next) => {
-  Accounts.getById(req.params.id)
-    .then((account) => {
-      res.status(200).json(account);
-    })
-    .catch((err) => {
-      next(err);
-    });
+// eslint-disable-next-line
+router.get("/:id", checkAccountId, (req, res, next) => {
+  res.status(200).json(req.account);
 });
 
-router.post("/", (req, res, next) => {
-  Accounts.create(req.body)
-    .then((account) => {
-      res.status(200).json(account);
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
+router.post(
+  "/",
+  checkAccountNameUnique,
+  checkAccountPayload,
+  (req, res, next) => {
+    Accounts.create(req.body)
+      .then((account) => {
+        res.status(200).json(account);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+);
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", checkAccountId, checkAccountPayload, (req, res, next) => {
   Accounts.updateById(req.params.id, req.body)
     .then((account) => {
       res.status(200).json(account);
@@ -41,7 +46,7 @@ router.put("/:id", (req, res, next) => {
     });
 });
 
-router.delete("/:id", (req, res, next) => {
+router.delete("/:id", checkAccountId, (req, res, next) => {
   Accounts.deleteById(req.params.id)
     .then((account) => {
       res.status(200).json(account);
