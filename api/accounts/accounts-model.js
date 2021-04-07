@@ -1,8 +1,14 @@
 const db = require("../../data/db-config");
 
-const getAll = () => {
-  return db("accounts");
-  // return db.raw("select * from accounts limit 6");
+const getAll = (query) => {
+  console.log(query);
+  if (!Object.keys(query).length) {
+    return db("accounts");
+  } else {
+    return db("accounts")
+      .orderBy(query.sortby, query.sortdir)
+      .limit(query.limit);
+  }
 };
 
 const getById = (id) => {

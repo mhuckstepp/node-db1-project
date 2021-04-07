@@ -7,7 +7,7 @@ const {
 } = require("./accounts-middleware");
 
 router.get("/", async (req, res, next) => {
-  Accounts.getAll()
+  Accounts.getAll(req.query)
     .then((accounts) => {
       res.status(200).json(accounts);
     })
