@@ -23,12 +23,12 @@ router.get("/:id", checkAccountId, (req, res, next) => {
 
 router.post(
   "/",
-  checkAccountNameUnique,
   checkAccountPayload,
+  checkAccountNameUnique,
   (req, res, next) => {
     Accounts.create(req.body)
       .then((account) => {
-        res.status(200).json(account);
+        res.status(201).json(account);
       })
       .catch((err) => {
         next(err);
